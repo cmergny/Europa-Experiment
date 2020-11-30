@@ -1,0 +1,46 @@
+mm3d Tapioca MulScale ".*JPG" 500 2500
+mm3d Tapioca All ".*JPG" -1
+
+mm3d Tapas FraserBasic ".*JPG" Out=Folder 
+mm3d Tapas RadialBasic ".*JPG" Out=Folder 
+mm3d Tapas RadialStd ".*JPG" Out=Folder 
+
+mm3d AperiCloud ".*JPG" Folder 
+
+mm3d SaisieMasqQT 1.JPG
+
+mm3d Malt GeomImage ".*JPG" Folder Master=1.JPG ZoomF=2
+
+mm3d Nuage2Ply "MM-Malt-Img-1/NuageImProf_STD-MALT_Etape_7.xml" Attr="1.JPG" Out=7.ply RatioAttrCarte=2
+
+
+mm3d SaisieAppuisInitQT ".*.JPG" Folder Dico-Appuis.xml Mesure-Appuis.xml
+
+mm3d GCPBascule ".*.JPG" Folder FolderGCP_Init Dico-Appuis.xml Mesure-Appuis-S2D.xml
+
+mm3d Campari ".*.JPG" FolderGCP_Init FolderGCP
+
+mm3d AperiCloud ".*.JPG" FolderGCP
+
+mm3d Malt GeomImage ".*JPG" FolderGCP Master=1.JPG ZoomF=2
+
+mm3d Nuage2Ply "MM-Malt-Img-1/NuageImProf_STD-MALT_Etape_8.xml" Attr="1.JPG" Out=8.ply RatioAttrCarte=1
+
+
+meshlabserver -i 
+mm3d Nuage2Ply "MM-Malt-Img-1/NuageImProf_STD-MALT_Etape_7.xml" Attr="1.JPG" Out=7.ply RatioAttrCarte=2
+mm3d Nuage2Ply "MM-Malt-Img-1/NuageImProf_STD-MALT_Etape_6.xml" Attr="1.JPG" Out=6.ply RatioAttrCarte=2
+mm3d Nuage2Ply "MM-Malt-Img-1/NuageImProf_STD-MALT_Etape_5.xml" Attr="1.JPG" Out=5.ply RatioAttrCarte=4
+mm3d Nuage2Ply "MM-Malt-Img-1/NuageImProf_STD-MALT_Etape_4.xml" Attr="1.JPG" Out=4.ply RatioAttrCarte=8
+
+
+ffmpeg  -start_number 5129 -i DSC_%04d.JPG -vf "transpose=2" -r 10  -vcodec mpeg4 video.mp4 
+
+ffmpeg  -start_number 5420 -i DSC_%04d.JPG -vf "transpose=2,eq=contrast=3,scale=2*iw:-1, crop=iw/2:ih/2" -r 10  -vcodec mpeg4 contrasted.mp4 
+
+cd MM-Malt-Img-1
+mm3d GrShade  MM-Malt-Img-1/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out=depth7.tif
+
+
+
+meshlabserver -i 7.ply -o output.ply -s script.mlx
