@@ -26,7 +26,7 @@ from PIL import Image, ImageEnhance
 import os # to create new folder
 import glob # to search for files
 from tqdm import tqdm # progress bar
-from skimage import feature # for edge detection
+#from skimage import feature # for edge detection
 from tkinter import Tk  # to open browse file window
 from tkinter.filedialog import askdirectory
 
@@ -46,9 +46,9 @@ def FilterChannel(im, save = False, output = "ImFilterChannel.JPG", show = False
     """
     #exif = im.info["exif"]
     res = np.array(im)
-    res[::, ::, 1] = 0 # Delete Red Channel
-    res[::, ::, 2] = 0 # Delete Red Channel
-    res = Image.fromarray(res)
+    #res[::, ::, 1] = 0 # Delete Green Channel
+    #res[::, ::, 2] = 0 # Delete Blue Channel
+    res = Image.fromarray(res[::, ::, 0])
     if save:
         res.save(output)
     if show: 
@@ -62,10 +62,10 @@ def EnhanceIm(im, save = False, output = "ImEnchanced.JPG", show = False):
     """
     # Sharpen 
     enhancer = ImageEnhance.Sharpness(im)
-    res = enhancer.enhance(2) 
+    res = enhancer.enhance(1) 
     # Improve contrast
     enhancer = ImageEnhance.Contrast(res)
-    res = enhancer.enhance(2)
+    res = enhancer.enhance(4)
     # Save 
     if save:
         res.save(output)
@@ -79,9 +79,12 @@ def EdgesDetection(im, save = False, output = "Edges.JPG", show = False ):
     Returns a binary image of the detected edges.
     """
     # Canny works with grayscale imgs only
-    res = np.array(im)[:,:,0]
-    edges = feature.canny(res, sigma=3)
-    edges = Image.fromarray(edges)
+    res = np.array(im) #[:,:,0]
+    #edges = feature.canny(res, sigma=5, low_threshold=None)
+    thresh = 240
+    res[res>thresh] = 255
+    res[res<=thresh] = 0
+    edges = Image.fromarray(res)
     # Save 
     if save:
         edges.save(output)
@@ -121,63 +124,83 @@ def ImproveEdges(im, save = False, output = "ImproveEdges.JPG", show = False ):
         ImShowReduced(res)
     return(res)
 
+def BrowseFolder(user_friendly, in_dir = "InputFolder"):
+    """
+    Open a window dialog to browse for a folder and return the
+    selected folder path.
+    """
+    if user_friendly ==  True: 
+        # Open window browse dialog
+        print("A window dialog has been opened. ", flush=True)
+        print("Waiting for user to select an input folder ... ", flush=True)
+        Tk().withdraw() # no root window
+        in_dir = askdirectory() # open a browse window and the file path
+    print(f"# Input folder path is: {in_dir}", flush=True)
+    return(in_dir)
+
+def CreateOutputFolder(user_friendly, in_dir, out_dir = 'OutputFolder'):
+    """
+    Create an output folder. Folder's name is either given by the out_dir
+    argument or asked by a input call if user_friendly is True.
+    """
+    if user_friendly ==  True: 
+        # Ask for ouput folder name  
+        out_dir = input('Creating an output directory, please give it a name : ')
+    # Output dir path in the same location as input folder
+    out_dir = '/'.join(in_dir.split('/')[:-1]) + '/' + out_dir
+    # Make dir
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+        print(f"New directory created at : {out_dir}", flush=True)
+    else:
+        print(f"Warning: directory already exists at {out_dir}. The progam will continue anyway.", flush=True)
+    return(out_dir)
 
 ### Main
-
-## Choose working folders
-# Manual assignement
-in_dir = "C:/Users/Arnaud/micmac_projects/XP2611/laser_2611/Contrast"
-out_dir = "test_folder"
-im_nbr = 9
-end_nbr = 13
-# For user interface version
-user_friendly = False
-
-# Find input folder  
-if user_friendly ==  True:
-    print("A window dialog has been opened. ", flush=True)
-    print("Waiting for user to select an input folder ... ", flush=True)
-    Tk().withdraw() # no root window
-    in_dir = askdirectory() # open a browse window and the file path
-print(f"The input folder path is: {in_dir}", flush=True)
-
-# Ask for ouput folder name  
-if user_friendly ==  True: 
-    out_dir = input('Creating an output directory, please give it a name : ')
-out_dir = '/'.join(in_dir.split('/')[:-1]) + '/' + out_dir
-# Create output folder   
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
-    print(f"New directory created at : {out_dir}", flush=True)
-else:
-    print(f"Warning: directory already exists at {out_dir}. The progam will continue anyway.", flush=True)
+if __name__ == '__main__':
     
+    print("\n --- Python Script to process laser images ---- \n")
+    
+    user_friendly = True
+    
+    if user_friendly:
+        # Find input folder  
+        in_dir = BrowseFolder(user_friendly)
+        out_dir = CreateOutputFolder(user_friendly, in_dir)
+    else:
+        # Manual assignement
+        in_dir = "C:/Users/Cyril/Documents/EuropaExp/XP0212/Raw"
+        BrowseFolder(user_friendly, in_dir)
+        out_dir = "RedChannel2"
+        out_dir = CreateOutputFolder(user_friendly, in_dir, out_dir)
+    # Files to process
+    im_nbr = 0
+    end_nbr = -1
 
-print("Image processing progress bar: \n", flush=True)
-progressbar = tqdm(glob.glob(in_dir+'/*.JPG')[im_nbr:end_nbr])
-## Process Images
-for image_name in progressbar:
-    ## 
-    #progressbar.set_postfix({'Image number ': f"  h {image_name[-8:]}"})
-    progressbar.set_postfix_str("image: " + image_name.split("\\")[-1])
-    ## Open image
-    im = Image.open(image_name)
-    ## Define saving path
-    output = f"{out_dir}/{image_name[len(in_dir)+1:]}"
-    # Rotate
-    res = im.rotate(91)
-    ## Crop 
-    #res = res.crop((1500,im.size[1]//2-700,  4500, 2*im.size[1]//3+1-700)) 
-    ## Remove Red Channel
-    #res = FilterChannel(res)
-    ## Enhance
-    res = EnhanceIm(res, True, output, True)
-    ## Extract Edges
-    #edges = EdgesDetection(im, True, output, True)
-    ## Improve Edges
-    #edges = ImproveEdges(edges, True, output, True)
-
-print("\n\nDone : all images have been processed.")
-
-
-
+    ## Process Images
+    print("Image processing progress bar: \n", flush=True)
+    progressbar = tqdm(glob.glob(in_dir+'/*.JPG')[im_nbr:end_nbr])
+    for image_name in progressbar:
+        ## Progress bar
+        progressbar.set_postfix_str("image: " + image_name.split("\\")[-1])
+        ## Open image
+        im = Image.open(image_name)
+        ## Define saving path
+        output = f"{out_dir}/{image_name[len(in_dir)+1:]}"
+        # Rotate
+        #im = im.rotate(90)
+        ## Crop 
+        im = im.crop((1500, 500, 2900, im.size[1]-500)) 
+        ## Remove Red Channel
+        im = FilterChannel(im, False, output, False)
+        ## Enhance
+        im = EnhanceIm(im, False, output, False)
+        ## Extract Edges
+        edges = EdgesDetection(im, True, output, True)
+        ## Improve Edges
+        #edges = ImproveEdges(edges, True, output, True)
+    
+    print("\n\nDone : all images have been processed.")
+    
+    
+    
