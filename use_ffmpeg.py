@@ -4,7 +4,7 @@ Convert a set of images to a movie file using ffmpeg via python.
 Images in the in_dir folder will be converted to a movie, if their name 
 is well formatted.
 Author: Cyril Mergny
-Last update : 02/12/2020
+Last update : 04/12/2020
 """
 
 ### Imports
@@ -71,9 +71,16 @@ def CallShellCmd(cmd, stdout = True, stderr = True, print_cmd = False):
     print(f" \t # Change os path back to {script_dir}")
     return(None)
 
+def Stack3Movies(topmov, midmov, botmov, outmov):
+    """" Write the ffmpeg command for stacking three movies into one."""
+    cmd = f'ffmpeg  -i {topmov} -i {midmov} -i {botmov} -filter_complex '
+    cmd += '"[0:v][1:v][2:v]vstack=inputs=3[v]" -map "[v]" {outmov}'
+    print(cmd)
+    return(cmd)
 
 
 #### Main
+
 if __name__ == '__main__':
     
     print("\n --- Python Script using ffmpeg ---- \n")
@@ -112,6 +119,5 @@ if __name__ == '__main__':
     # midmov = 'ho.mp4'
     # botmov = 'ha.mp4'
     # outmov = 'hi.mp4'
-    # cmd = f'ffmpeg  -i {topmov} -i {midmov} -i {botmov} -filter_complex "[0:v][1:v][2:v]vstack=inputs=3[v]" -map "[v]" {outmov}'
-    # print(cmd)
+    # Stack3Movies(topmov, midmov, botmov, outmov)
     

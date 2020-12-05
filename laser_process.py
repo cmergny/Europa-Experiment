@@ -15,7 +15,7 @@ This script helps applying theses transformations to a large number of images.
 Although, for testing purposes, single image manipulation is also possible.
 
 Author : Cyril Mergny
-Last update : 02/12/2020
+Last update : 04/12/2020
 """
 
 ### Imports 
