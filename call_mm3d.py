@@ -50,26 +50,26 @@ def Callmm3d(in_dir):
         os.chdir(folder_name)
         folder_name = folder_name.split('\\')[-1]
         
-        cmd = 'mm3d Tapioca All ".*JPG" -1'
-        CallCommand(cmd)
+        # cmd = 'mm3d Tapioca All ".*JPG" -1'
+        # CallCommand(cmd)
         
-        cmd = 'mm3d Tapas FraserBasic ".*JPG" Out=Folder'
-        CallCommand(cmd)
+        # cmd = 'mm3d Tapas FraserBasic ".*JPG" Out=Folder'
+        # CallCommand(cmd)
         
-        cmd = 'mm3d AperiCloud ".*JPG" Folder '
-        CallCommand(cmd)
+        # cmd = 'mm3d AperiCloud ".*JPG" Folder '
+        # CallCommand(cmd)
         
-        cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF=2'
-        CallCommand(cmd)
+        # cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF=2'
+        # CallCommand(cmd)
         
-        cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_7.xml" Attr="{master_nbr}.JPG" Out=7.ply RatioAttrCarte=2'
-        CallCommand(cmd)
+        # cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_7.xml" Attr="{master_nbr}.JPG" Out=7.ply RatioAttrCarte=2'
+        # CallCommand(cmd)
         
-        cmd = f'mm3d GrShade MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out={in_dir}/depth_maps/{folder_name}.JPG'
-        CallCommand(cmd)
+        # cmd = f'mm3d GrShade MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out={in_dir}/depth_maps/{folder_name}.JPG'
+        # CallCommand(cmd)
 
-        #cmd = 'meshlabserver -i 7.ply -o output.ply -s script.mlx'
-        #CallCommand(cmd)
+        cmd = f'meshlabserver -i 7.ply -o mesh_{folder_name[-3:]}.ply -s {in_dir}\script.mlx'
+        CallCommand(cmd)
         
     return(None)
     
