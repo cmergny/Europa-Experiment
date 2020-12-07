@@ -24,6 +24,12 @@ def SaveImage(image_name, out_dir, im_nbr):
     """
     im = Image.open(image_name)
     exif = im.info["exif"]
+    
+    res = np.array(im)
+    res[::, ::, 0] = 0 # Delete Red Channel
+    #res[::, ::, 2] = 0 # Delete Blue Channel
+    im = Image.fromarray(res)
+    
     im.save(f"{out_dir}/{im_nbr}.JPG", exif=exif)
     return(None)
 
@@ -72,7 +78,7 @@ def SortImages(in_dir, delta):
         if elt[2] == 0 : # Found a new set
             ctg += 1 # create a new category
             # Make a new dir for this ctg
-            out_dir = "set_{}".format(ctg)
+            out_dir = "set_{:03d}".format(ctg)
             out_dir = CreateOutputFolder(False, in_dir, out_dir)
             # Finding all pics of same set
             im_nbr = 0 
@@ -99,8 +105,9 @@ if __name__ == '__main__':
         delta = int(input("Minimum time difference to be assigned to a same set ( in minutes) : "))
     else:
         ## Manual Definition 
-        in_dir = "C:/Users/Cyril/Documents/EuropaExp/photos" # input dir
+        in_dir = "C:/Users/Arnaud/micmac_projects/XP0212/Stereo/All_stereo" # input dir
         in_dir = BrowseFolder(user_friendly, in_dir)
-        delta = 3 # min time diff required to be assigned to a same set (min)
+        delta = 2 # min time diff required to be assigned to a same set (min)
         
     SortImages(in_dir, delta)
+    

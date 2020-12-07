@@ -42,7 +42,7 @@ def WriteFfmpegCmd(start_nbr, imgs_names, movie_name):
     #vf = '-vf "transpose=1, eq=contrast=1, crop=2500:in_h/6:2000:in_h/2"'
     #vf = '-vf crop=2500:in_h/6+1:2000:in_h/2'
     ## ffmpeg command arguments
-    args = f'-y -r 12 -start_number {start_nbr} -i {imgs_names} {vf}'
+    args = f'-y -r 1 -start_number {start_nbr} -i {imgs_names} {vf}'
     args += f' -vcodec mjpeg -crf 28 {movie_name}'
     ## Call ffmpeg with args from its location
     cmd = f"C:\\Ffmpeg\\bin\\ffmpeg.exe {args}"
@@ -64,7 +64,7 @@ def CallShellCmd(cmd, stdout = True, stderr = True, print_cmd = False):
     if stdout:
         print('\n' + call_result.stdout)
     if stderr:
-          print('\n' + call_result.stderr)
+        print('\n' + call_result.stderr)
     ## Change back
     script_dir = os.path.dirname(__file__)
     os.chdir(script_dir)
@@ -95,12 +95,13 @@ if __name__ == '__main__':
         start_nbr = int(input("# Enter starting number: "))
     else:
         ## Manual Definition 
-        in_dir = "C:/Users/Cyril/Documents/EuropaExp/XP0212/Raw" # input dir
+        in_dir = "C:/Users/Arnaud/micmac_projects/XP0212/Stereo/depth_maps" # input dir
         in_dir = BrowseFolder(user_friendly, in_dir)
-        movie_name = "../Contrast.mp4"
-        start_nbr = 5621 # Image number to start the movie
+        movie_name = "../depth.mp4"
+        start_nbr = 10 # Image number to start the movie
         
     ## Find format name
+    #print(glob.glob(in_dir))
     image_name = glob.glob(in_dir+'/*.JPG')[0].split('\\')[-1]
     imgs_names = GetImageNameFormat(image_name) # Image name format
     #imgs_names = "" # if smth went wrong enter it manually
