@@ -97,7 +97,7 @@ def SortImages(in_dir, delta):
 
 if __name__ == '__main__':
     
-    user_friendly = False
+    user_friendly = True
     
     if user_friendly:
         ## Find input folder  

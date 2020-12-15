@@ -19,9 +19,8 @@ def CallCommand(cmd):
     """Type the cmd argument in a terminal shell and print the output"""
     print(f"--- Calling command : {cmd} ---")
     call_result = subprocess.run(cmd, capture_output=True,text=True)
-    print(call_result.stderr)
+    #print(call_result.stderr)
     #print(call_result.stdout)
-    in_dir = "C:/Users/Arnaud/micmac_projects/XP0212/Stereo"
     with open(f'{in_dir}/callmm3d-log.txt', 'a') as f:
         f.write(f"--- Calling command : {cmd} --- \n")
         f.write(call_result.stderr)
@@ -30,7 +29,7 @@ def CallCommand(cmd):
 
 def CreateMasqs(in_dir, master_nbr):
     """"Open the mm3d SaisieMasqQt GUI for all sets in the input folder"""
-    for folder_name in glob.glob(in_dir + '/set_*'):
+    for folder_name in glob.glob(in_dir + '/set_***'):
         ## Change os dir to input directory
         os.chdir(folder_name)
         print(f'Moving to folder : "{folder_name}".')
@@ -45,7 +44,7 @@ def CreateMasqs(in_dir, master_nbr):
 
 def Callmm3d(in_dir):
     
-    for folder_name in glob.glob(in_dir + '/set_*'):
+    for folder_name in glob.glob(in_dir + '/set_***'):
         print(f'Moving to folder : "{folder_name}".')
         os.chdir(folder_name)
         folder_name = folder_name.split('\\')[-1]
@@ -59,17 +58,21 @@ def Callmm3d(in_dir):
         # cmd = 'mm3d AperiCloud ".*JPG" Folder '
         # CallCommand(cmd)
         
-        # cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF=2'
-        # CallCommand(cmd)
-        
-        # cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_7.xml" Attr="{master_nbr}.JPG" Out=7.ply RatioAttrCarte=2'
-        # CallCommand(cmd)
-        
-        # cmd = f'mm3d GrShade MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out={in_dir}/depth_maps/{folder_name}.JPG'
-        # CallCommand(cmd)
-
-        cmd = f'meshlabserver -i 7.ply -o mesh_{folder_name[-3:]}.ply -s {in_dir}\script.mlx'
+        cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF=1'
         CallCommand(cmd)
+        
+        #cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_7.xml" Attr="{master_nbr}.JPG" Out=7.ply RatioAttrCarte=2'
+        #CallCommand(cmd)
+
+
+        #cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_8.xml" Attr="{master_nbr}.JPG" Out=8.ply RatioAttrCarte=1'
+        #CallCommand(cmd)
+        
+        #cmd = f'mm3d GrShade MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out={in_dir}/depth_maps/{folder_name}.JPG'
+        #CallCommand(cmd)
+
+        #cmd = f'meshlabserver -i 7.ply -o mesh_{folder_name[-3:]}.ply -s {in_dir}\script.mlx'
+        #CallCommand(cmd)
         
     return(None)
     
@@ -86,9 +89,9 @@ if __name__ == '__main__':
         master_nbr = int(input("master_nbr = "))
     else:
         ## Manual Definition 
-        in_dir = "C:/Users/Arnaud/micmac_projects/XP0212/Stereo" # input dir
+        in_dir = "C:/Users/Arnaud/micmac_projects/XP1412/Stereo" # input dir
         in_dir = BrowseFolder(user_friendly, in_dir)
-        master_nbr = 3
+        master_nbr = 4
     
     # Create a log file for shell outputs
     f = open(f'{in_dir}/callmm3d-log.txt', 'w')

@@ -38,12 +38,12 @@ def GetImageNameFormat(image_name):
 def WriteFfmpegCmd(start_nbr, imgs_names, movie_name):
     """ Returns a string that is a command line calling ffmpeg"""    
     ## visual effects
-    vf = "" # means no vf
+    vf = '' # means no vf
     #vf = '-vf "transpose=1, eq=contrast=1, crop=2500:in_h/6:2000:in_h/2"'
     #vf = '-vf crop=2500:in_h/6+1:2000:in_h/2'
     ## ffmpeg command arguments
-    args = f'-y -r 1 -start_number {start_nbr} -i {imgs_names} {vf}'
-    args += f' -vcodec mjpeg -crf 28 {movie_name}'
+    args = f'-y -r 15 -start_number {start_nbr} -i {imgs_names} {vf}'
+    args += f' -vcodec libx265 -crf 28 {movie_name}'
     ## Call ffmpeg with args from its location
     cmd = f"C:\\Ffmpeg\\bin\\ffmpeg.exe {args}"
     return(cmd)
@@ -95,10 +95,10 @@ if __name__ == '__main__':
         start_nbr = int(input("# Enter starting number: "))
     else:
         ## Manual Definition 
-        in_dir = "C:/Users/Arnaud/micmac_projects/XP0212/Stereo/depth_maps" # input dir
+        in_dir = "C:/Users/Arnaud/micmac_projects/XP1412/Raw" # input dir
         in_dir = BrowseFolder(user_friendly, in_dir)
-        movie_name = "../depth.mp4"
-        start_nbr = 10 # Image number to start the movie
+        movie_name = "../movie.mp4"
+        start_nbr = 5611 # Image number to start the movie
         
     ## Find format name
     #print(glob.glob(in_dir))

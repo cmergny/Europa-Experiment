@@ -26,7 +26,7 @@ from PIL import Image, ImageEnhance
 import os # to create new folder
 import glob # to search for files
 from tqdm import tqdm # progress bar
-#from skimage import feature # for edge detection
+from skimage import feature # for edge detection
 from tkinter import Tk  # to open browse file window
 from tkinter.filedialog import askdirectory
 
@@ -65,7 +65,7 @@ def EnhanceIm(im, save = False, output = "ImEnchanced.JPG", show = False):
     res = enhancer.enhance(1) 
     # Improve contrast
     enhancer = ImageEnhance.Contrast(res)
-    res = enhancer.enhance(4)
+    res = enhancer.enhance(1)
     # Save 
     if save:
         res.save(output)
@@ -80,10 +80,11 @@ def EdgesDetection(im, save = False, output = "Edges.JPG", show = False ):
     """
     # Canny works with grayscale imgs only
     res = np.array(im) #[:,:,0]
-    #edges = feature.canny(res, sigma=5, low_threshold=None)
-    thresh = 240
-    res[res>thresh] = 255
-    res[res<=thresh] = 0
+    res = feature.canny(res, sigma=2) #, low_threshold=None)
+    # thresh = 220
+    # #res[res<=240] = 128
+    # res[res>thresh] = 255
+    # res[res<=thresh] = 0
     edges = Image.fromarray(res)
     # Save 
     if save:
@@ -161,7 +162,7 @@ if __name__ == '__main__':
     
     print("\n --- Python Script to process laser images ---- \n")
     
-    user_friendly = True
+    user_friendly = False
     
     if user_friendly:
         # Find input folder  
@@ -169,9 +170,9 @@ if __name__ == '__main__':
         out_dir = CreateOutputFolder(user_friendly, in_dir)
     else:
         # Manual assignement
-        in_dir = "C:/Users/Cyril/Documents/EuropaExp/XP0212/Raw"
+        in_dir = "C:/Users/Arnaud/micmac_projects/XP0912/LaserExtension"
         BrowseFolder(user_friendly, in_dir)
-        out_dir = "RedChannel2"
+        out_dir = "EdgesExtension"
         out_dir = CreateOutputFolder(user_friendly, in_dir, out_dir)
     # Files to process
     im_nbr = 0
@@ -190,11 +191,11 @@ if __name__ == '__main__':
         # Rotate
         #im = im.rotate(90)
         ## Crop 
-        im = im.crop((1500, 500, 2900, im.size[1]-500)) 
+        im = im.crop((1600, 100, 2700, im.size[1]-200)) 
         ## Remove Red Channel
         im = FilterChannel(im, False, output, False)
         ## Enhance
-        im = EnhanceIm(im, False, output, False)
+        im = EnhanceIm(im, False, output, True)
         ## Extract Edges
         edges = EdgesDetection(im, True, output, True)
         ## Improve Edges
