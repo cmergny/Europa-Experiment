@@ -65,7 +65,7 @@ def EnhanceIm(im, save = False, output = "ImEnchanced.JPG", show = False):
     res = enhancer.enhance(1) 
     # Improve contrast
     enhancer = ImageEnhance.Contrast(res)
-    res = enhancer.enhance(1)
+    res = enhancer.enhance(4)
     # Save 
     if save:
         res.save(output)
@@ -135,6 +135,7 @@ def BrowseFolder(user_friendly, in_dir = "InputFolder"):
         print("A window dialog has been opened. ", flush=True)
         print("Waiting for user to select an input folder ... ", flush=True)
         Tk().withdraw() # no root window
+        Tk().focus_force()
         in_dir = askdirectory() # open a browse window and the file path
     print(f"# Input folder path is: {in_dir}", flush=True)
     return(in_dir)
@@ -170,14 +171,13 @@ if __name__ == '__main__':
         out_dir = CreateOutputFolder(user_friendly, in_dir)
     else:
         # Manual assignement
-        in_dir = "C:/Users/Arnaud/micmac_projects/XP0912/LaserExtension"
+        in_dir = "C:/Users/Arnaud/EuropaExp/XP1612/RawOscillations2"
         BrowseFolder(user_friendly, in_dir)
-        out_dir = "EdgesExtension"
+        out_dir = "LaserContrast2"
         out_dir = CreateOutputFolder(user_friendly, in_dir, out_dir)
     # Files to process
     im_nbr = 0
     end_nbr = -1
-
     ## Process Images
     print("Image processing progress bar: \n", flush=True)
     progressbar = tqdm(glob.glob(in_dir+'/*.JPG')[im_nbr:end_nbr])
@@ -189,15 +189,15 @@ if __name__ == '__main__':
         ## Define saving path
         output = f"{out_dir}/{image_name[len(in_dir)+1:]}"
         # Rotate
-        #im = im.rotate(90)
+        im = im.rotate(1)
         ## Crop 
-        im = im.crop((1600, 100, 2700, im.size[1]-200)) 
+        im = im.crop((1800, 0, 4200, im.size[1])) 
         ## Remove Red Channel
-        im = FilterChannel(im, False, output, False)
+        #im = FilterChannel(im, False, output, False)
         ## Enhance
-        im = EnhanceIm(im, False, output, True)
+        im = EnhanceIm(im, True, output, True)
         ## Extract Edges
-        edges = EdgesDetection(im, True, output, True)
+        #edges = EdgesDetection(im, True, output, True)
         ## Improve Edges
         #edges = ImproveEdges(edges, True, output, True)
     
