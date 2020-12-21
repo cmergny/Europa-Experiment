@@ -9,44 +9,76 @@ Created on Mon Dec 21 12:59:56 2020
 import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+
+def SeparateAxis(xyz, step):
+    x,y,z = [], [], []
+    for k in range(0, xyz.shape[0], step):
+        x.append(xyz[k,0])
+        y.append(xyz[k,1])
+        z.append(xyz[k,2])
+    x = np.array(x)
+    y = np.array(y)
+    z = np.array(z)
+    return(x, y, z)
+
 
 if __name__ == "__main__":
 
     # Load saved point cloud and visualize it
-    pt_cloud = o3d.io.read_point_cloud("C:/Users/Arnaud/EuropaExp/XP1612/Stereo/up_view/8.ply")
-    #o3d.visualization.draw_geometries([pcd_load])
-
+    pt_cloud = o3d.io.read_point_cloud("C:/Users/Arnaud/EuropaExp/XP1612/Stereo/up_view/beautifulmesh.ply")
     # convert Open3D.o3d.geometry.PointCloud to numpy array
     xyz = np.asarray(pt_cloud.points)
+    step = 10
+    x,y,z = SeparateAxis(xyz, step)
 
+    # Find best fitting plane
+    plane_model, inliers = pt_cloud.segment_plane(distance_threshold=1, ransac_n=3, num_iterations=10)
+    [a, b, c, d] = plane_model
+    print(f"Plane equation: {a:.2f}x + {b:.2f}y + {c:.2f}z + {d:.2f} = 0")
     
-    x,y,z = [], [], []
-    for k in range(0, xyz.shape[0], 1000):
-        x.append(xyz[k,0])
-        y.append(xyz[k,1])
-        z.append(xyz[k,2])
     
-    x = np.array(x)
-    y = np.array(y)
-    z = np.array(z)
+    
+    # Rotation Factors
+    var = np.sqrt(a**2 + b**2 + c**2)
+    u1 = b/np.sqrt(a**2 + b**2)
+    u2 = -a/np.sqrt(a**2 + b**2)
+    cos = c/var
+    sin = np.sqrt((a**2 + b**2)/(a**2 + b**2 + c**2))
+    # Rotation matrix
+    Rotator = np.array([[cos+u1**2*(1-cos), u1*u2*(1-cos), u2*sin],
+                       [u1*u2*(1-cos), cos+u2**2*(1-cos), -u1*sin],
+                       [-u2*sin, u1*sin, cos]])
+    # Rotated point cloud
+    XYZ = np.dot(xyz, Rotator.T)
+    X,Y,Z = SeparateAxis(XYZ, step)
+    # Translation
+    Z = z -d/c
+    
+    
+    theta = 0.9*np.pi/2
+    Rotator = np.array([[np.cos(theta), - np.sin(theta), 0], [np.sin(theta), np.cos(theta),0], [0, 0, 1]])
+    xyz = np.dot(np.array([X,Y,Z]).T, Rotator)
+    x, y, z = SeparateAxis(xyz, step)
+    
+    
+    
+    # Plot x, y ,z 
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    
+    ax.scatter(X, Y, Z, s =0.1, color = "green")
+    ax.scatter(x, y, z, s=0.1, color = "red")
+    
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    ax.view_init(azim=100, elev=10)
+    plt.show()
 
     
     # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # ax.scatter(x, y, -z, zdir='z',s=0.1)
-    # ax.view_init(azim=180, elev=10)
+    # ax = fig.add_subplot(111)
+    # ax.scatter(z[:],x[:],s=0.2)
+    # ax.set_xlabel("y")
+    # ax.set_ylabel("z")
     # plt.show()
-    
-    # # rotate the axes and update
-    # for angle in range(0, 360):
-    #     ax.view_init(30, angle)
-    #     plt.draw()
-    #     plt.pause(.001)
-    
-    
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.scatter(y[:],z[:],s=0.2)
-    plt.show()
