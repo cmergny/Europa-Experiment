@@ -66,6 +66,9 @@ def EnhanceIm(im, save = False, output = "ImEnchanced.JPG", show = False):
     # Improve contrast
     enhancer = ImageEnhance.Contrast(res)
     res = enhancer.enhance(4)
+    # Brightness
+    enhancer = ImageEnhance.Brightness(res)
+    res = enhancer.enhance(1)
     # Save 
     if save:
         res.save(output)
@@ -171,9 +174,9 @@ if __name__ == '__main__':
         out_dir = CreateOutputFolder(user_friendly, in_dir)
     else:
         # Manual assignement
-        in_dir = "C:/Users/Arnaud/EuropaExp/XP1612/RawOscillations2"
+        in_dir = "C://Users//Arnaud//EuropaExp//XP2112//RawOscillations2"
         BrowseFolder(user_friendly, in_dir)
-        out_dir = "LaserContrast2"
+        out_dir = "ContrastOscillations2"
         out_dir = CreateOutputFolder(user_friendly, in_dir, out_dir)
     # Files to process
     im_nbr = 0
@@ -189,9 +192,9 @@ if __name__ == '__main__':
         ## Define saving path
         output = f"{out_dir}/{image_name[len(in_dir)+1:]}"
         # Rotate
-        im = im.rotate(1)
+        im = im.rotate(0)
         ## Crop 
-        im = im.crop((1800, 0, 4200, im.size[1])) 
+        im = im.crop((2000, 0, 4300, im.size[1])) 
         ## Remove Red Channel
         #im = FilterChannel(im, False, output, False)
         ## Enhance

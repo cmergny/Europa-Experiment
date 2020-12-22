@@ -95,10 +95,10 @@ if __name__ == '__main__':
         start_nbr = int(input("# Enter starting number: "))
     else:
         ## Manual Definition 
-        in_dir = "C:/Users/Arnaud/EuropaExp/XP1612/LaserContrast2" # input dir
+        in_dir = "C:/Users/Arnaud/EuropaExp/XP2112/ContrastOscillations2" # input dir
         in_dir = BrowseFolder(user_friendly, in_dir)
-        movie_name = "../OscillationsPart2.mp4"
-        start_nbr = 1 # Image number to start the movie
+        movie_name = "../ContrastOscillations2.mp4"
+        start_nbr = 3236 # Image number to start the movie
         
     ## Find format name
     #print(glob.glob(in_dir))

@@ -5,7 +5,6 @@ Created on Mon Dec 21 12:59:56 2020
 @author: Arnaud
 """
 
-
 import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
@@ -28,16 +27,13 @@ if __name__ == "__main__":
     pt_cloud = o3d.io.read_point_cloud("C:/Users/Arnaud/EuropaExp/XP1612/Stereo/up_view/beautifulmesh.ply")
     # convert Open3D.o3d.geometry.PointCloud to numpy array
     xyz = np.asarray(pt_cloud.points)
-    step = 10
+    step = 40
     x,y,z = SeparateAxis(xyz, step)
 
     # Find best fitting plane
     plane_model, inliers = pt_cloud.segment_plane(distance_threshold=1, ransac_n=3, num_iterations=10)
     [a, b, c, d] = plane_model
     print(f"Plane equation: {a:.2f}x + {b:.2f}y + {c:.2f}z + {d:.2f} = 0")
-    
-    
-    
     # Rotation Factors
     var = np.sqrt(a**2 + b**2 + c**2)
     u1 = b/np.sqrt(a**2 + b**2)
@@ -48,37 +44,39 @@ if __name__ == "__main__":
     Rotator = np.array([[cos+u1**2*(1-cos), u1*u2*(1-cos), u2*sin],
                        [u1*u2*(1-cos), cos+u2**2*(1-cos), -u1*sin],
                        [-u2*sin, u1*sin, cos]])
-    # Rotated point cloud
-    XYZ = np.dot(xyz, Rotator.T)
-    X,Y,Z = SeparateAxis(XYZ, step)
-    # Translation
-    Z = z -d/c
+    # Rotate point cloud
+    XYZ = np.dot(np.array([x,y,z]).T, Rotator.T)
+    #X,Y,Z = SeparateAxis(XYZ, step)
+    # Translate point cloud
+    #Z = z -d/c
+    # Rotation matrix
+    # theta = 0.9*np.pi/2
+    # Rotator = np.array([[np.cos(theta), - np.sin(theta), 0], [np.sin(theta), np.cos(theta),0], [0, 0, 1]])
+    # # Rotate point cloud
+    # xyz = np.dot(np.array([X,Y,Z]).T, Rotator)
+    # x, y, z = SeparateAxis(xyz, 1)
+    # Rotation matrix
+    theta = np.pi/4
+    Rotator = np.array([[1, 0, 0], [0, np.cos(theta), -np.sin(theta)], [0, np.sin(theta), np.cos(theta)]])
+    # Rotate point cloud
+    xyz = np.dot(XYZ, Rotator.T )
+    x, y, z = SeparateAxis(xyz, 1)
     
-    
-    theta = 0.9*np.pi/2
-    Rotator = np.array([[np.cos(theta), - np.sin(theta), 0], [np.sin(theta), np.cos(theta),0], [0, 0, 1]])
-    xyz = np.dot(np.array([X,Y,Z]).T, Rotator)
-    x, y, z = SeparateAxis(xyz, step)
-    
-    
-    
-    # Plot x, y ,z 
+    ## 3D  Plot 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    
-    ax.scatter(X, Y, Z, s =0.1, color = "green")
+    #ax.scatter(X, Y, Z, s =0.1, color = "green")
     ax.scatter(x, y, z, s=0.1, color = "red")
-    
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_zlabel("z")
     ax.view_init(azim=100, elev=10)
     plt.show()
 
-    
+    ## 2D Plot
     # fig = plt.figure()
     # ax = fig.add_subplot(111)
-    # ax.scatter(z[:],x[:],s=0.2)
-    # ax.set_xlabel("y")
+    # ax.scatter(x,z,s=0.2)
+    # ax.set_xlabel("x")
     # ax.set_ylabel("z")
     # plt.show()

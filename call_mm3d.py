@@ -58,26 +58,20 @@ def Callmm3d(in_dir):
         # cmd = 'mm3d AperiCloud ".*.JPG" Folder'
         # CallCommand(cmd)
 
-        
         # cmd = 'mm3d Tapioca All ".*JPG" -1'
         # CallCommand(cmd)
         # cmd = 'mm3d Tapas FraserBasic ".*JPG" Out=Folder'
         # CallCommand(cmd)
         # cmd = 'mm3d AperiCloud ".*JPG" Folder '
         # CallCommand(cmd)
-        # cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF=1'
+        Zoom = 2
+        # cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF={Zoom}'
         # CallCommand(cmd)
-        cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_8.xml" Attr="{master_nbr}.JPG" Out=8.ply RatioAttrCarte=1'
+        cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_{9-Zoom}.xml" Attr="{master_nbr}.JPG" Out={9-Zoom}.ply RatioAttrCarte={Zoom}'
         CallCommand(cmd)
-        
-        #cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_7.xml" Attr="{master_nbr}.JPG" Out=7.ply RatioAttrCarte=2'
-        #CallCommand(cmd)
 
-
-        
         #cmd = f'mm3d GrShade MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out={in_dir}/depth_maps/{folder_name}.JPG'
         #CallCommand(cmd)
-
         #cmd = f'meshlabserver -i 7.ply -o mesh_{folder_name[-3:]}.ply -s {in_dir}\script.mlx'
         #CallCommand(cmd)
         
@@ -97,7 +91,7 @@ if __name__ == '__main__':
         master_nbr = int(input("master_nbr = "))
     else:
         ## Manual Definition 
-        in_dir = "C:/Users/Arnaud/EuropaExp/XP1612/Stereo" # input dir
+        in_dir = "C:/Users/Arnaud/EuropaExp/XP2112/Stereo" # input dir
         in_dir = BrowseFolder(user_friendly, in_dir)
         master_nbr = 3
     
@@ -106,12 +100,5 @@ if __name__ == '__main__':
     f.close()
     print(glob.glob(in_dir + '/set_***'))
     
-    #CreateMasqs(in_dir, master_nbr)
+    # CreateMasqs(in_dir, master_nbr)
     Callmm3d(in_dir)
-    
-
-# mm3d SaisieAppuisInitQT ".*.JPG" Folder Dico-Appuis.xml Mesure-Appuis.xml
-    
-# mm3d GCPBascule ".*.JPG" Folder1 Etape_ini Dico-Appuis.xml Mesure-Appuis-S2D.xml
-# mm3d Campari ".*.JPG" Etape_ini Etape_inter
-# mm3d AperiCloud ".*.JPG" Folder
