@@ -29,7 +29,7 @@ def CallCommand(cmd):
 
 def CreateMasqs(in_dir, master_nbr):
     """"Open the mm3d SaisieMasqQt GUI for all sets in the input folder"""
-    for folder_name in glob.glob(in_dir + '/set_***'):
+    for folder_name in glob.glob(in_dir):
         ## Change os dir to input directory
         os.chdir(folder_name)
         print(f'Moving to folder : "{folder_name}".')
@@ -44,37 +44,45 @@ def CreateMasqs(in_dir, master_nbr):
 
 def Callmm3d(in_dir):
     
-    for folder_name in glob.glob(in_dir + '/set_***'):
+    for folder_name in glob.glob(in_dir):
         print(f'Moving to folder : "{folder_name}".')
         os.chdir(folder_name)
         folder_name = folder_name.split('\\')[-1]
         
+        # cmd = 'mm3d Tapioca All ".*JPG" -1'
+        # CallCommand(cmd)
+        # cmd = 'mm3d Tapas FraserBasic ".*JPG" Out=Folder1'
+        # CallCommand(cmd)
+        # cmd = 'mm3d AperiCloud ".*JPG" Folder1'
+        # CallCommand(cmd)
+        
         # cmd = 'mm3d SaisieAppuisInitQT ".*.JPG" Folder1 Dico-Appuis.xml Mesure-Appuis.xml'
         # CallCommand(cmd)
+        
         # cmd = 'mm3d GCPBascule ".*.JPG" Folder1 Etape_ini Dico-Appuis.xml Mesure-Appuis-S2D.xml'
         # CallCommand(cmd)
         # cmd = 'mm3d Campari ".*.JPG" Etape_ini Folder'
         # CallCommand(cmd)
         # cmd = 'mm3d AperiCloud ".*.JPG" Folder'
         # CallCommand(cmd)
-
-        # cmd = 'mm3d Tapioca All ".*JPG" -1'
-        # CallCommand(cmd)
-        # cmd = 'mm3d Tapas FraserBasic ".*JPG" Out=Folder'
-        # CallCommand(cmd)
-        # cmd = 'mm3d AperiCloud ".*JPG" Folder '
-        # CallCommand(cmd)
+        
         Zoom = 2
-        # cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF={Zoom}'
-        # CallCommand(cmd)
+        cmd = f'mm3d Malt GeomImage ".*JPG" Folder Master={master_nbr}.JPG ZoomF={Zoom}'
+        CallCommand(cmd)
         cmd = f'mm3d Nuage2Ply "MM-Malt-Img-{master_nbr}/NuageImProf_STD-MALT_Etape_{9-Zoom}.xml" Attr="{master_nbr}.JPG" Out={9-Zoom}.ply RatioAttrCarte={Zoom}'
         CallCommand(cmd)
-
-        #cmd = f'mm3d GrShade MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out={in_dir}/depth_maps/{folder_name}.JPG'
-        #CallCommand(cmd)
-        #cmd = f'meshlabserver -i 7.ply -o mesh_{folder_name[-3:]}.ply -s {in_dir}\script.mlx'
-        #CallCommand(cmd)
         
+        
+        # cmd = 'mm3d Tawny Ortho-MEC-Malt Out=Orthophotomosaic.tif'
+        # CallCommand(cmd)
+        # cmd = f'mm3d to8Bits MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif Out=hypso.tif Coul=1 Dyn=3 Mask=MM-Malt-Img-{master_nbr}/AutoMask_STD-MALT_Num_6.tif'
+        # CallCommand(cmd)
+        # cmd = f'mm3d Malt Ortho ".*JPG" Folder ZoomF={Zoom}'
+        # CallCommand(cmd)
+        # cmd = f'mm3d GrShade MM-Malt-Img-{master_nbr}/Z_Num7_DeZoom2_STD-MALT.tif ModeOmbre=IgnE Mask=AutoMask_STD-MALT_Num_6.tif FZ=2 Out={in_dir}/depth_maps/{folder_name}.JPG'
+        # CallCommand(cmd)
+        # cmd = f'meshlabserver -i 7.ply -o mesh_{folder_name[-3:]}.ply -s {in_dir}\script.mlx'
+        # CallCommand(cmd)
         
     return(None)
     
@@ -91,14 +99,13 @@ if __name__ == '__main__':
         master_nbr = int(input("master_nbr = "))
     else:
         ## Manual Definition 
-        in_dir = "C:/Users/Arnaud/EuropaExp/XP2112/Stereo" # input dir
+        in_dir = "C:/Users/Cyril/Documents/Work/PLR1/EuropaExp/XP2611/set_GCP/" # input dir
         in_dir = BrowseFolder(user_friendly, in_dir)
-        master_nbr = 3
+        master_nbr = 1
     
     # Create a log file for shell outputs
     f = open(f'{in_dir}/callmm3d-log.txt', 'w')
     f.close()
-    print(glob.glob(in_dir + '/set_***'))
     
-    # CreateMasqs(in_dir, master_nbr)
+    #CreateMasqs(in_dir, master_nbr)
     Callmm3d(in_dir)
