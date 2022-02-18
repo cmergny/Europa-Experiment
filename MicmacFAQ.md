@@ -77,3 +77,23 @@ mm3d Nuage2Ply "MM-Malt-Img-image1/NuageImProf_STD-MALT_Etape_4.xml" Attr="image
 Arguments: 
 -  RatioAttrCarte=2 &rarr; should be the same as ZoomF
 -  Out=nuage.ply &rarr; output file containing the point cloud
+
+### Post-Processing with meshlab
+
+To create a mesh out of the point cloud, first if the point cloud is too big (mutliple millions of vertices), simplify it using:
+
+`Filters > Point Set > Point Cloud Simplification`
+
+I usually take 500k points as a good compromise.
+
+Then go to:
+
+`Filters > Point Set > Compute normals for point set`
+
+it may take some times if the point cloud is big and the number of neighbors chosen is high.
+
+Once done apply:
+
+`Filters > Remeshing, Simplification and Reconstruction > Surface Reconstruction: Screened Poisson`
+
+It will probably create extra surface as a plane at the border of your mesh, just remove it by hand.
